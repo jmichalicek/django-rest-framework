@@ -116,17 +116,15 @@ During dispatch, the following attributes are available on the `ViewSet`.
 * `name` - the display name for the viewset. This argument is mutually exclusive to `suffix`.
 * `description` - the display description for the individual view of a viewset.
 
-You may inspect these attributes to adjust behavior based on the current action. For example, you could restrict permissions to everything except the `list` action similar to this:
+You may inspect these attributes to adjust behavior based on the current action. For example, you could override the permissions for the `list` action while allowing all others to use the default `permission_classes` set on the class or in your settings similar to below:
 
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.action == 'list':
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
 ## Marking extra actions for routing
 
